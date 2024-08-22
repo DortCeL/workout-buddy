@@ -1,5 +1,6 @@
 import { backendUrl } from "../../config";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
+import { formatDistanceToNow } from "date-fns";
 
 const WorkoutDetails = ({ workout }) => {
 	const { dispatch } = useWorkoutsContext();
@@ -32,7 +33,9 @@ const WorkoutDetails = ({ workout }) => {
 					{workout.reps}
 				</p>
 				<p className='text-gray-500'>
-					{new Date(workout.createdAt).toLocaleDateString()}
+					{formatDistanceToNow(new Date(workout.createdAt), {
+						addSuffix: true,
+					})}
 				</p>
 			</div>
 			<div>
