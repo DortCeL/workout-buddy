@@ -12,8 +12,8 @@ import { backendUrl } from "../../config";
 const url = `${backendUrl}/api/workouts`; // Correct URL with protocol
 
 export default function Home() {
-	// const [workouts, setWorkouts] = useState(null);
-	const [workouts, dispatch] = useWorkoutsContext();
+	// destructuring so third bracket... balsal
+	const { workouts, dispatch } = useWorkoutsContext();
 
 	useEffect(() => {
 		const fetchWorkouts = async () => {
@@ -22,7 +22,6 @@ export default function Home() {
 				const json = await response.json();
 
 				if (response.ok) {
-					// setWorkouts(json);
 					dispatch({ type: "SET_WORKOUTS", payload: json });
 				} else {
 					console.error("Failed to fetch workouts");
@@ -37,13 +36,14 @@ export default function Home() {
 
 	return (
 		<>
-			<div className='flex flex-row'>
+			<div className='container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-6'>
 				<div>
 					{workouts &&
 						workouts.map((workout) => (
 							<WorkoutDetails key={workout._id} workout={workout} />
 						))}
 				</div>
+
 				<WorkoutForm />
 			</div>
 		</>

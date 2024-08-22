@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { backendUrl } from "../../config";
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
 export default function WorkoutForm() {
+	const { dispatch } = useWorkoutsContext();
+
 	const [title, setTitle] = useState("");
 	const [load, setLoad] = useState("");
 	const [reps, setReps] = useState("");
@@ -20,15 +23,20 @@ export default function WorkoutForm() {
 		});
 
 		const json = await response.json();
+
 		if (!response.ok) {
 			setError(json.error);
 		}
 
 		if (response.ok) {
+			// egula local state change korbe
 			setError(null);
 			setTitle("");
 			setLoad("");
 			setReps("");
+
+			// eita global state change korbe
+			dispatch({ type: "CREATE_WORKOUT", payload: json.workout });
 
 			console.log(`new workout added! ${json}`);
 		}
@@ -37,33 +45,36 @@ export default function WorkoutForm() {
 	return (
 		<div>
 			<form
-				className='bg-slate-400 flex flex-col p-12 rounded m-5 w-60'
+				className='bg-slate-400 p-8 rounded-lg shadow-lg m-5 w-full max-w-md'
 				onSubmit={handleSubmit}
 			>
-				<label>Exercise title : </label>
+				<label className='block mb-2'>Exercise title :</label>
 				<input
 					type='text'
 					name='title'
+					className='w-full p-2 mb-4 rounded border'
 					onChange={(e) => {
 						setTitle(e.target.value);
 					}}
 					value={title}
 				/>
 
-				<label>Load (in KG) : </label>
+				<label className='block mb-2'>Load (in KG) :</label>
 				<input
 					type='text'
 					name='load'
+					className='w-full p-2 mb-4 rounded border'
 					onChange={(e) => {
 						setLoad(e.target.value);
 					}}
 					value={load}
 				/>
 
-				<label>Reps : </label>
+				<label className='block mb-2'>Reps :</label>
 				<input
 					type='text'
 					name='reps'
+					className='w-full p-2 mb-4 rounded border'
 					onChange={(e) => {
 						setReps(e.target.value);
 					}}
@@ -72,12 +83,16 @@ export default function WorkoutForm() {
 
 				<button
 					type='submit'
-					className='bg-green-700 hover:bg-green-600 text-white px-2 py-2 rounded-xl mt-4'
+					className='w-full bg-green-700 hover:bg-green-600 text-white py-2 rounded-lg mt-4 transition-all duration-200'
 				>
 					Add
 				</button>
 
-				{error && <div id='error'>{error}</div>}
+				{error && (
+					<div id='error' className='mt-4 text-red-500'>
+						{error}
+					</div>
+				)}
 			</form>
 		</div>
 	);
